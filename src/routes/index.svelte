@@ -114,6 +114,12 @@
       steps: stepsTextAndIcons,
       props: { vertical: true, reverse: true },
     },
+    {
+      title: 'Stop step',
+      code: `<Steps {steps} stop/>`,
+      steps: stepsTextOnly,
+      props: { stop: true },
+    },
   ]
 
   let current = 1

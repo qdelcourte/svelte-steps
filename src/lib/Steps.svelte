@@ -13,12 +13,14 @@
       - `icon`: A svelte component displayed inside each steps.
       - `iconProps`: An object that will be passed as props to the `icon` component.
   - `current`: current step index. Number. Default `0`
+  - `stop`: When set to `true`, the current step index use the error color
   - `size`: size of the step buttons. String. Default `"3rem"`
   - `line`: thickness of the connecting lines between the step buttons. String. Default `"0.3rem"`
   - `primary`: Primary color of passed and current steps. String. Default `'var(--bs-primary, #3a86ff)'`
   - `secondary`: Secondary color of future steps. String. Default `'var(--bs-secondary, #bbbbc0)'`
   - `light`: Primary color of text color in passed anc current steps. String. Default `'var(--bs-light, white)'`
   - `dark`: Secondary color of text color in future steps. String. Default `'var(--bs-dark, black)'`
+  - `error`: Error color of text color in future steps. String. Default `'var(--bs-error, red)'`
   - `borderRadius`: Border radius of the step buttons. String. Default `'50%'` (circle)
   - `fontFamily`: Font family of the component. String. Default `"'Helvetica Neue', Helvetica, Arial, sans-serif"`
   - `vertical`: Vertical steps
@@ -42,6 +44,7 @@
 
   export let steps: any[]
   export let current = 0
+  export let stop = false
   export let vertical = false
   export let size = vertical ? '2rem' : '3rem'
   export let line = vertical ? '0.15rem' : '0.3rem'
@@ -50,6 +53,7 @@
   export let secondary = 'var(--bs-secondary, #bbbbc0)'
   export let light = 'var(--bs-light, white)'
   export let dark = 'var(--bs-dark, black)'
+  export let error = 'var(--bs-error, red)'
   export let borderRadius = '50%'
   export let fontFamily = ''
   export let reverse = false
@@ -133,6 +137,7 @@
       --secondary: ${secondary};
       --light: ${light};
       --dark: ${dark};
+      --error: ${error};
       --border-radius: ${borderRadius};
       --font-family: ${
         fontFamily || "'Helvetica Neue', Helvetica, Arial, sans-serif"
@@ -213,9 +218,9 @@
           <!-- circle -->
           <div
             class="step
-              {i <= $progress
+              {(stop && i == current) ? `bg-error text-light` : (i <= $progress
               ? `bg-primary text-light`
-              : `bg-secondary text-light`}
+              : `bg-secondary text-light`)}
               "
             class:hover-highlight={clickable}
             class:shadow={i == current}
@@ -260,7 +265,8 @@
           >
             {#if typeof step.text != 'undefined'}
               <div
-                class:text-primary={i <= $progress}
+                class:text-primary={i <= $progress && !stop}
+                class:text-error={stop && i == current}
                 on:click={() => {
                   onClick(i)
                 }}
@@ -310,11 +316,17 @@
   .text-dark {
     color: var(--dark) !important;
   }
+  .text-error {
+    color: var(--error) !important;
+  }
   .bg-secondary {
     background-color: var(--secondary) !important;
   }
   .bg-primary {
     background-color: var(--primary) !important;
+  }
+  .bg-error {
+    background-color: var(--error) !important;
   }
   .shadow {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
